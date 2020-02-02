@@ -1,0 +1,93 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-5">
+    <form action="/settings/profiel" method="POST" id="profile_form">
+      <input type="hidden" name="email" value="{{ user.email }}">
+      <input type="hidden" name="password" value="{{ user.password }}">
+      <div class="form-group">
+        <label for="exampleInputEmail1">邮箱</label>
+        <p class="form-control-static">{{ user.email }}</p>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">昵称</label>
+        <input type="text" class="form-control" id="exampleInputPassword1" name="nickname" value="{{ user.nickname }}">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">介绍</label>
+        <textarea class="form-control" rows="3" name="bio">{{ user.bio }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">性别</label>
+        <div>
+          <label class="radio-inline">
+            {{if user.gender=== '0'}}
+            <input type="radio" name="gender" value="0" checked> 男
+            {{else}}
+            <input type="radio" name="gender" value="0"> 男
+            {{/if}}
+          </label>
+          <label class="radio-inline">
+            {{if user.gender=== '1'}}
+            <input type="radio" name="gender" value="1" checked> 女
+            {{else}}
+            <input type="radio" name="gender" value="1"> 女
+            {{/if}}
+          </label>
+          <label class="radio-inline">
+            {{if user.gender=== '-1'}}
+            <input type="radio" name="gender" value="-1" checked> 保密
+            {{else}}
+            <input type="radio" name="gender" value="-1"> 保密
+            {{/if}}
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">生日</label>
+        <input type="date" class="form-control" id="exampleInputPassword1" placeholder="" name="birthday" value="{{ user.birthday }}">
+      </div>
+      <button type="submit" class="btn btn-success">保存</button>
+    </form>
+  </div>
+  <div class="col-md-2 profile-avatar">
+    <dl>
+      <dt>头像设置</dt>
+      <dd>
+        <img class="avatar" width="150" height="150" src="{{ user.avatar }}" alt="">
+        <div>
+          <button class="btn btn-default" href="">Upload new picture</button>
+        </div>
+      </dd>
+    </dl>
+  </div>
+</section>
+
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+  $('#profile_form').on('submit',function (e) {
+    e.preventDefault()
+    var formData = $(this).serialize()
+    console.log(formData)
+    $.ajax({
+      url: '/settings/profile',
+      type: 'post',
+      data: formData,
+      dataType: 'json',
+      success(data) {
+        var err_code = data.err_code
+        if(err_code === 0) {
+          window.location.href = '/'
+        } else if(err_code === 500) {
+          window.alert(data.message)
+        }
+        console.log(data)
+      }
+    })
+  })
+</script>
+{{/block}}

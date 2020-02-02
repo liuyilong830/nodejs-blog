@@ -1,0 +1,63 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-5">
+    <div class="subhead">
+      <h2>修改密码</h2>
+    </div>
+    <hr>
+    <form id="pass_form">
+      <div class="form-group">
+        <label for="exampleInputPassword1">当前密码</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="oldPass">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">新的密码</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="newPass1">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">确认密码</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="newPass2">
+      </div>
+      <button type="submit" class="btn btn-success">保存</button>
+    </form>
+    <div class="subhead">
+      <h2>注销账号</h2>
+      <hr>
+    </div>
+    <div>
+      <p>一旦注销，不可找回，请谨慎操作</p>
+      <button class="btn btn-danger">删除</button>
+    </div>
+    <hr>
+  </div>
+</section>
+
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+  $('#pass_form').on('submit' , function (e) {
+    e.preventDefault()
+    var formData = $(this).serialize()
+    // console.log(formData)
+    $.post({
+      url: '/settings/admin',
+      type: 'post',
+      data: formData,
+      dataType: 'json',
+      success(data) {
+        var err_code = data.err_code
+        if(err_code === 0) {
+          window.location.href = '/'
+        } else if(err_code === 1 || err_code === 2 || err_code === 500) {
+          window.alert(data.message)
+        }
+        // console.log(data)
+      }
+    })
+  })
+</script>
+{{/block}}
